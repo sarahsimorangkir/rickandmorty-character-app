@@ -1,0 +1,11 @@
+.wrapScroll {
+    overflow-y: auto;
+    position: relative;
+}
+
+.wrapInfoScroll {
+    position: fixed;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+}
