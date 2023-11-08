@@ -4,6 +4,7 @@ import {APPEND_VALUE_MAP, SET_VALUE} from "../../../cores/context/actions";
 import {getAllCharacters} from "../data/characters";
 import {ScrollElement} from "../../../cores/components/ScrollElement";
 import {useNavigate} from "react-router-dom";
+import Header from "../../../cores/components/Header";
 
 export function Character({...props}) {
     const {characters, charactersGetInfo, characterMap} = useStoreState();
@@ -66,6 +67,7 @@ export function Character({...props}) {
     }
 
     return (<div>
+         <Header navigate={navigate}/>
         {characters.length > 0 &&
             <ScrollElement 
             doOnScrollBottom={handleOnScroll}

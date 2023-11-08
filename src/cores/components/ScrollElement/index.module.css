@@ -1,6 +1,7 @@
 .wrapScroll {
     overflow-y: auto;
     position: relative;
+    background-color: black;
 }
 
 .wrapInfoScroll {
@@ -8,4 +9,16 @@
     left: 50%;
     bottom: 40px;
     transform: translateX(-50%);
+}
+.cardImage{
+    width:150px;
+}
+
+.cardText {
+    min-width: 250px;
+    font-weight: 500;
+}
+
+.nameText:hover{
+    color: #FFD700;
 }

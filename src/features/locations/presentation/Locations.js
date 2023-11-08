@@ -1,22 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {useStoreDispatch, useStoreState} from "../../../cores/context/store";
-import {getAllCharacters, getAllLocations} from "../data/characters";
-import {APPEND_VALUE_MAP, SET_VALUE} from "../../../cores/context/actions";
-import {useNavigate, useParams} from "react-router-dom";
-import {Row} from "react-bootstrap";
-import {assignLocation, firebaseDB} from "../../../cores/utils/firebase";
+import {useParams} from "react-router-dom";
+import {getAllLocations} from "../../characters/data/characters";
+import {APPEND_VALUE_MAP, appendMap, SET_VALUE} from "../../../cores/context/actions";
 import {onValue, ref, set} from "firebase/database";
+import {firebaseDB} from "../../../cores/utils/firebase";
+import {Row} from "react-bootstrap";
+import {getCharacterByID} from "../data/character";
 
-
-export default function CharacterDetail({...props}) {
-    const navigate = useNavigate();
-    const {locations, locationsGetInfo} = useStoreState();
+export function Locations() {
+    const {locations, locationsGetInfo, characterMap} = useStoreState();
     const dispatch = useStoreDispatch();
     const [page, setPage] = useState(locationsGetInfo != null ? locationsGetInfo.next - 1 : 1);
     const [isLoading, setIsLoading] = useState(false);
-    const {character_id} = useParams();
     const [selectedLocation, setSelectedLocation] = useState("-");
-    
+    const [shownData, setShownData] = useState([]);
 
     useEffect(() => {
         let fetchData = true;
@@ -76,40 +74,42 @@ export default function CharacterDetail({...props}) {
     }
 
     // Use in location page
-    function getAllAssignedLocation(){
-        if(selectedLocation !== "-"){
-            onValue(ref(firebaseDB, `assign/location-${selectedLocation}`), snapshot => {
+    function getAllAssignedLocation(locationID) {
+        if (selectedLocation !== "-") {
+            onValue(ref(firebaseDB, `assign/location-${locationID}`), async (snapshot) => {
                 let data = snapshot.val()
-                if(!!data){
-                    // Character -> Get Key
-                    console.log(data);
-                }else{
-                   // TODO: Location Not Have Character
+                if (!!data) {
+                    let keys = Object.keys(data);
+                    let result = [];
+                    for (let i = 0; i < keys.length; i++) {
+                        result.push(await getData(keys[i]));
+                    }
+                    console.log(result);
+                    setShownData(result);
+                } else {
+                    setShownData([]);
                 }
             })
         }
     }
 
-    async function handleOnClickAssign(e) {
-        if (selectedLocation !== "-") {
-            setIsLoading(true);
-            let param = {
-                characterID: character_id,
-                locationID: selectedLocation,
+    async function getData(characterID) {
+        console.log(`Start Checking ${characterID}`);
+        if (characterMap[characterID] !== undefined) {
+            console.log("From MAP");
+           return characterMap[characterID];
+        } else {
+            console.log("FROM API")
+            let result = await getCharacterByID(characterID);
+            let mapped = {
+                [result.id]: result
             };
-            let characterRef = ref(firebaseDB, `assign/character-${param.characterID}`)
-            onValue(characterRef, async (snapshot) => {
-                const data = snapshot.val();
-                if (!!data) {
-                   alert("Character Already Assigned")
-                } else {
-                    await set(ref(firebaseDB, `assign/character-${param.characterID}`), param).catch(err => console.log(err))
-                    await set(ref(firebaseDB, `assign/location-${param.locationID}/${param.characterID}`), true).catch(err => console.log(err))
+            dispatch({
+                type: APPEND_VALUE_MAP, payload: {
+                    name: "characterMap", value: mapped,
                 }
-                setIsLoading(false)
-            }, {
-                onlyOnce: true,
-            })
+            });
+            return result;
         }
     }
 
@@ -121,7 +121,7 @@ export default function CharacterDetail({...props}) {
                     <select className={"col-12"} name={"locations"} onChange={(e) => {
                         const {value} = e.currentTarget;
                         setSelectedLocation(value);
-                        getAllAssignedLocation()
+                        getAllAssignedLocation(value);
                     }} value={selectedLocation} onScroll={handleOnScroll}>
 
                         <option value={"-"} disabled={true}>Select Location</option>
@@ -130,13 +130,12 @@ export default function CharacterDetail({...props}) {
                         ))}
                     </select>
                 </div>
-                <div className={"col-12"}>
-                    <button onClick={handleOnClickAssign} className={"btn btn-info"}>{isLoading ? "Loading..." : "Assign Location"}</button>
+                <div className={"col-12 d-flex flex-wrap"}>
+                    {shownData.length > 0 && shownData.map((item, index) => (
+                        <div key={`card-shown-${index}`}><img src={item.image} alt={"test"}/></div>
+                    ))}
                 </div>
             </Row>
-            <div>
-                
-            </div>
         </div>
     );
 }
