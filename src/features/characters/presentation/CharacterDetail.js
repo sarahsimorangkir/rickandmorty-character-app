@@ -3,8 +3,7 @@ import { useStoreDispatch, useStoreState } from "../../../cores/context/store";
 import { getAllLocations } from "../data/characters";
 import { APPEND_VALUE_MAP, SET_VALUE } from "../../../cores/context/actions";
 import { useNavigate, useParams } from "react-router-dom";
-import { Row } from "react-bootstrap";
-import { assignLocation, firebaseDB } from "../../../cores/utils/firebase";
+import { firebaseDB } from "../../../cores/utils/firebase";
 import { onValue, ref, set } from "firebase/database";
 
 export default function CharacterDetail({ ...props }) {

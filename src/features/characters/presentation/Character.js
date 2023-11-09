@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 import Header from "../../../cores/components/Header";
 
 export function Character({...props}) {
-    const {characters, charactersGetInfo, characterMap} = useStoreState();
+    const {characters, charactersGetInfo} = useStoreState();
     const dispatch = useStoreDispatch();
     const [page, setPage] = useState(charactersGetInfo != null ? charactersGetInfo.next - 1 : 1);
     const [isLoading, setIsLoading] = useState(false);

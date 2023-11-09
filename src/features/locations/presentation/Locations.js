@@ -5,10 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAllLocations } from "../../characters/data/characters";
 import {
   APPEND_VALUE_MAP,
-  appendMap,
   SET_VALUE,
 } from "../../../cores/context/actions";
-import { onValue, ref, set } from "firebase/database";
+import { onValue, ref } from "firebase/database";
 import { firebaseDB } from "../../../cores/utils/firebase";
 import { Row } from "react-bootstrap";
 import { getCharacterByID } from "../data/character";
