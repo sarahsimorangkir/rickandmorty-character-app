@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useStoreDispatch, useStoreState} from "../../../cores/context/store";
-import {getAllCharacters, getAllLocations} from "../data/characters";
+import { getAllLocations} from "../data/characters";
 import {APPEND_VALUE_MAP, SET_VALUE} from "../../../cores/context/actions";
 import {useNavigate, useParams} from "react-router-dom";
 import {Row} from "react-bootstrap";
@@ -16,6 +16,18 @@ export default function CharacterDetail({...props}) {
     const [isLoading, setIsLoading] = useState(false);
     const {character_id} = useParams();
     const [selectedLocation, setSelectedLocation] = useState("-");
+
+    let [detailsData, updateFetchedData] = useState([]);
+    let { name, location, gender, image, status, species } = detailsData;
+
+    let api = `https://rickandmortyapi.com/api/character/${character_id}`;
+
+    useEffect(() => {
+        (async function () {
+        let data = await fetch(api).then((res) => res.json());
+        updateFetchedData(data);
+        })();
+    }, [api]);
     
 
     useEffect(() => {
@@ -105,6 +117,7 @@ export default function CharacterDetail({...props}) {
                 } else {
                     await set(ref(firebaseDB, `assign/character-${param.characterID}`), param).catch(err => console.log(err))
                     await set(ref(firebaseDB, `assign/location-${param.locationID}/${param.characterID}`), true).catch(err => console.log(err))
+                    alert(`Character sucessfully assigned`)
                 }
                 setIsLoading(false)
             }, {
@@ -115,28 +128,52 @@ export default function CharacterDetail({...props}) {
 
 
     return (
-        <div className={"bg-dark col-12 d-flex vh-100"}>
-            <Row>
-                <div className={"col-12"}>
-                    <select className={"col-12"} name={"locations"} onChange={(e) => {
-                        const {value} = e.currentTarget;
-                        setSelectedLocation(value);
-                        getAllAssignedLocation()
-                    }} value={selectedLocation} onScroll={handleOnScroll}>
-
-                        <option value={"-"} disabled={true}>Select Location</option>
-                        {locations.length > 0 && locations.map((location, index) => (
-                            <option value={location.id} key={`location-${index}`}>{location.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className={"col-12"}>
-                    <button onClick={handleOnClickAssign} className={"btn btn-info"}>{isLoading ? "Loading..." : "Assign Location"}</button>
-                </div>
-            </Row>
-            <div>
-                
+        <div className="col-12 d-flex vh-100 ustify-content-center" style={{backgroundColor: "black"}}>
+    <div className="col-md-4 mt-5">
+        <select
+            className="form-select col-12 mt-2"
+            name="locations"
+            onChange={(e) => {
+                const { value } = e.currentTarget;
+                setSelectedLocation(value);
+                getAllAssignedLocation();
+            }}
+            value={selectedLocation}
+            onScroll={handleOnScroll}
+        >
+            <option value={"-"} disabled={true}>
+                Select Location
+            </option>
+            {locations.length > 0 &&
+                locations.map((location, index) => (
+                    <option value={location.id} key={`location-${index}`}>
+                        {location.name}
+                    </option>
+                ))}
+        </select>
+        <button
+            onClick={handleOnClickAssign}
+            className="btn btn-warning mt-3"
+        >
+            {isLoading ? "Loading..." : "Assign Location"}
+        </button>
+    </div>
+    <div className="col-md-6 align-items-center">
+        <div className="card mt-5" style={{ width: "20rem" }}>
+            <img className="card-img-top" src={image} alt="Card cap" />
+            <div className="card-body card-text">
+                <h3>{name}</h3>
+                <p>
+                    {status} - {species}
+                </p>
+                <p>Gender: {gender}</p>
+                <p>{`Last seen at: ${location?.name}`}</p>
             </div>
         </div>
+    </div>
+    
+</div>
+
+    
     );
 }
