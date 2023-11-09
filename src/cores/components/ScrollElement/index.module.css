@@ -1,24 +1,38 @@
 .wrapScroll {
-    overflow-y: auto;
-    position: relative;
-    background-color: black;
+  overflow-y: auto;
+  position: relative;
+  background-color: black;
 }
 
 .wrapInfoScroll {
-    position: fixed;
-    left: 50%;
-    bottom: 40px;
-    transform: translateX(-50%);
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
 }
-.cardImage{
-    width:150px;
+
+.cardImage {
+  width: 100%;
+  max-width: 150px; 
 }
 
 .cardText {
-    min-width: 250px;
-    font-weight: 500;
+  min-width: 250px;
+  font-weight: 500;
 }
 
-.nameText:hover{
-    color: #FFD700;
+.nameText:hover {
+  color: #ffd700;
+}
+
+@media (max-width: 767px) {
+  .wrapInfoScroll {
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 575px) {
+  .cardText {
+    min-width: auto;
+  }
 }
