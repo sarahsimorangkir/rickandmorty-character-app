@@ -9,7 +9,7 @@
 - Using react context
 - Manipulate data with Graphql and Rest
 - Store assigned characters data in Firebase
-- Mostly using bootsrap 4 for styling
+- Mostly using bootstrap 4 for styling
 
 UI:
 
