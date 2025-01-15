@@ -1,7 +1,7 @@
 import React from "react";
 import styles from './index.module.css'
 
-const index = ({navigate, ...props}) => {
+const Header = ({navigate, ...props}) => {
   return (
     <div className={"bg-light h-350 text-center text-black p-4 "}>
       
@@ -11,4 +11,4 @@ const index = ({navigate, ...props}) => {
   );
 };
 
-export default index;
+export default Header;
